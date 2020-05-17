@@ -60,8 +60,10 @@ public class AuthController {
 							 @ApiParam(value = "账号") @RequestParam(required = false) String account,
 							 @ApiParam(value = "密码") @RequestParam(required = false) String password) {
 
+		/**获取用户类型，默认是web*/
 		String userType = Func.toStr(WebUtil.getRequest().getHeader(TokenUtil.USER_TYPE_HEADER_KEY), TokenUtil.DEFAULT_USER_TYPE);
 
+		/**设置参数*/
 		TokenParameter tokenParameter = new TokenParameter();
 		tokenParameter.getArgs().set("tenantId", tenantId)
 			.set("account", account)
