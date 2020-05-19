@@ -55,16 +55,23 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
 	@Override
 	public List<MenuVO> routes(String roleId) {
+		/**所有菜单*/
 		List<Menu> allMenus = baseMapper.allMenu();
+		/**根据roleId获取对应的menus*/
 		List<Menu> roleMenus = baseMapper.roleMenu(Func.toIntList(roleId));
+		/**转化Link列表*/
 		List<Menu> routes = new LinkedList<>(roleMenus);
 		roleMenus.forEach(roleMenu -> recursion(allMenus, routes, roleMenu));
+		/**排序*/
 		routes.sort(Comparator.comparing(Menu::getSort));
 		MenuWrapper menuWrapper = new MenuWrapper();
 		List<Menu> collect = routes.stream().filter(x -> Func.equals(x.getCategory(), 1)).collect(Collectors.toList());
 		return menuWrapper.listNodeVO(collect);
 	}
 
+	/**
+	 * 递归
+	 */
 	public void recursion(List<Menu> allMenus, List<Menu> routes, Menu roleMenu) {
 		Optional<Menu> menu = allMenus.stream().filter(x -> Func.equals(x.getId(), roleMenu.getParentId())).findFirst();
 		if (menu.isPresent() && !routes.contains(menu.get())) {
